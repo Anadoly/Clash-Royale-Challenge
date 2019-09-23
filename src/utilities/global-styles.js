@@ -24,7 +24,7 @@ const GlobalStyles = () => {
           margin: 0;
         }
         body {
-          background: #f6f7f9;
+          background: #488bf4;
         }
       `}
     />

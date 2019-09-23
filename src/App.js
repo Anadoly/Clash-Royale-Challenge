@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from './logo.svg';
+import { Logo } from '@images';
 import './App.css';
 import components from '@components';
 import { GlobalStyles } from '@utilities';
@@ -11,7 +11,7 @@ function App() {
     <div className="App">
       <GlobalStyles />
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img src={Logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>

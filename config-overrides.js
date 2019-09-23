@@ -13,6 +13,7 @@ module.exports = override(
     '@components': path.resolve(__dirname, 'src/components'),
     '@utilities': path.resolve(__dirname, 'src/utilities'),
     '@scenes': path.resolve(__dirname, 'src/scenes'),
+    '@images': path.resolve(__dirname, 'src/images'),
   }),
   addLessLoader({
     javascriptEnabled: true,
