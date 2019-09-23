@@ -2,13 +2,14 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import components from '@components';
-import utilities from '@utilities';
+import { GlobalStyles } from '@utilities';
 import scenes from '@scenes';
 
 function App() {
-  console.log(scenes, utilities, components);
+  console.log(scenes, components);
   return (
     <div className="App">
+      <GlobalStyles />
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>

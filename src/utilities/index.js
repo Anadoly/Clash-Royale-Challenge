@@ -1,3 +1,1 @@
-let utilities = 'utilities';
-
-export default utilities;
+export { default as GlobalStyles } from './global-styles';
