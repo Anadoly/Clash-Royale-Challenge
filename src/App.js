@@ -1,8 +1,12 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import components from '@components';
+import utilities from '@utilities';
+import scenes from '@scenes';
 
 function App() {
+  console.log(scenes, utilities, components);
   return (
     <div className="App">
       <header className="App-header">
