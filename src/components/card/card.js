@@ -41,9 +41,9 @@ const CardLevel = styled.p`
   font-weight: 900;
   font-size: 24px;
   margin: 0;
-  padding-bottom: 10px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 0 0 20px 20px;
+  padding-bottom: ${props => (props.level === 9 ? '20px' : '10px')};
+  background: ${props => (props.level === 9 ? '' : 'rgba(0, 0, 0, 0.5)')};
+  border-radius: ${props => (props.level === 9 ? '0' : ' 0 0 20px 20px')};
 `;
 
 const Card = props => (
@@ -53,7 +53,7 @@ const Card = props => (
       alt={props.card.idName}
     />
     <CardElixir level={props.card.level}>{props.card.elixirCost}</CardElixir>
-    <CardLevel>
+    <CardLevel level={props.card.level}>
       {props.card.level === 9
         ? `Lvl ${props.card.level}`
         : `Level ${props.card.level}`}
