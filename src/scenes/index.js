@@ -1,3 +1,1 @@
-let scenes = 'scenes';
-
-export default scenes;
+export { default as DeckGenerator } from './deck-generator/deck-generator';

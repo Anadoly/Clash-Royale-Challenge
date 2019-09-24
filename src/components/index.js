@@ -1,3 +1,1 @@
-let components = 'components';
-
-export default components;
+export { default as Card } from './card/card';
