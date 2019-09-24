@@ -1,5 +1,16 @@
 import React, { Component } from 'react';
 import { default as Cards } from './components/cards';
+import styled from '@emotion/styled/macro';
+
+import { Container, Title } from '@utilities';
+
+const DeckGeneratorWrapper = styled.div`
+  ${Container}
+`;
+
+const H1 = styled.h1`
+  ${Title}
+`;
 
 export default class DeckGenerator extends Component {
   state = {
@@ -22,11 +33,11 @@ export default class DeckGenerator extends Component {
   render() {
     const { cards } = this.state;
     return (
-      <div>
-        <p>DeckGenerator</p>
+      <DeckGeneratorWrapper>
+        <H1>DeckGenerator</H1>
         {!cards && <p>Loading...</p>}
         {cards && <Cards cards={cards} />}
-      </div>
+      </DeckGeneratorWrapper>
     );
   }
 }
