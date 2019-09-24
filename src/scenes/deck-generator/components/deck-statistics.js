@@ -16,7 +16,7 @@ const StatisticsBar = styled.div`
   & > div {
     border: 1px solid #000;
   }
-  & div:first-child {
+  & div:first-of-type {
     border-radius: 10px 0 0 10px;
   }
   & div + div:last-child {
