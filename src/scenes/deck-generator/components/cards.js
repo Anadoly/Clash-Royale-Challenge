@@ -7,7 +7,7 @@ import { Card } from '@components';
 const CardsWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
-  width: 900px;
+  width: 760px;
   margin: auto;
 `;
 
