@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { default as Cards } from './components/cards';
+import { default as DeckStatistics } from './components/deck-statistics';
 import styled from '@emotion/styled/macro';
 
 import { Container, Title } from '@utilities';
@@ -24,14 +25,14 @@ export default class DeckGenerator extends Component {
   }
 
   deckStatistics = cards => {
-    const ElixirCostStatistics = this.averageElixirCost(cards);
+    const elixirCostStatistics = this.averageElixirCost(cards);
     const cycleCostStatistics = this.minimumCycleCost(cards);
     const cardTypes = this.cardTypes(cards);
     const cardRarities = this.cardRarities(cards);
     this.setState({
       cards,
       deckStatistics: {
-        ElixirCostStatistics,
+        elixirCostStatistics,
         cycleCostStatistics,
         cardTypes,
         cardRarities,
@@ -46,6 +47,10 @@ export default class DeckGenerator extends Component {
       ElixirCostStatistics.totalCost += card.elixirCost;
     });
     ElixirCostStatistics.averageElixirCost = ElixirCostStatistics.totalCost / 8;
+    ElixirCostStatistics.averageElixirCostPercentage = this.handlePercent(
+      ElixirCostStatistics.averageElixirCost,
+      ElixirCostStatistics.totalCost
+    );
     return ElixirCostStatistics;
   };
 
@@ -62,14 +67,21 @@ export default class DeckGenerator extends Component {
       (a, b) => a + b,
       0
     );
+    cycleCostStatistics.minimumCycleCostPercentage = this.handlePercent(
+      cycleCostStatistics.minimumCycleCost,
+      cycleCostStatistics.totalCost
+    );
     return cycleCostStatistics;
   };
 
   cardTypes = cards => {
     const cardTypes = {
       troop: 0,
+      troopPercentage: 0,
       spell: 0,
+      spellPercentage: 0,
       building: 0,
+      buildingPercentage: 0,
     };
 
     cards.forEach(card => {
@@ -87,15 +99,23 @@ export default class DeckGenerator extends Component {
           break;
       }
     });
+    cardTypes.troopPercentage = this.handlePercent(cardTypes.troop, 8);
+    cardTypes.spellPercentage = this.handlePercent(cardTypes.spell, 8);
+    cardTypes.buildingPercentage = this.handlePercent(cardTypes.building, 8);
+
     return cardTypes;
   };
 
   cardRarities = cards => {
     const cardRarities = {
       common: 0,
+      commonPercentage: 0,
       rare: 0,
+      rarePercentage: 0,
       epic: 0,
+      epicPercentage: 0,
       legendary: 0,
+      legendaryPercentage: 0,
     };
 
     cards.forEach(card => {
@@ -116,7 +136,18 @@ export default class DeckGenerator extends Component {
           break;
       }
     });
+    cardRarities.commonPercentage = this.handlePercent(cardRarities.common, 8);
+    cardRarities.rarePercentage = this.handlePercent(cardRarities.rare, 8);
+    cardRarities.epicPercentage = this.handlePercent(cardRarities.epic, 8);
+    cardRarities.legendaryPercentage = this.handlePercent(
+      cardRarities.legendary,
+      8
+    );
     return cardRarities;
+  };
+
+  handlePercent = (number, totleNmber) => {
+    return (number / totleNmber) * 100;
   };
 
   cardArrayGenerator = cards => {
@@ -136,7 +167,12 @@ export default class DeckGenerator extends Component {
       <DeckGeneratorWrapper>
         <H1>DeckGenerator</H1>
         {!cards && <p>Loading...</p>}
-        {cards && <Cards cards={cards} />}
+        {cards && (
+          <>
+            <Cards cards={cards} />
+            <DeckStatistics deckStatistics={deckStatistics} />
+          </>
+        )}
       </DeckGeneratorWrapper>
     );
   }
