@@ -13,6 +13,13 @@ const CardWarpper = styled.div`
   color: ${colors.primaryColor};
 `;
 
+const CardA = styled.a`
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  cursor: pointer;
+`;
+
 const CardImg = styled.img`
   width: 100%;
   height: 100%;
@@ -48,16 +55,18 @@ const CardLevel = styled.p`
 
 const Card = props => (
   <CardWarpper key={props.card._id}>
-    <CardImg
-      src={`${process.env.REACT_APP_BACK_END_API}/images/cards/${props.card.idName}.png`}
-      alt={props.card.idName}
-    />
-    <CardElixir level={props.card.level}>{props.card.elixirCost}</CardElixir>
-    <CardLevel level={props.card.level}>
-      {props.card.level === 9
-        ? `Lvl ${props.card.level}`
-        : `Level ${props.card.level}`}
-    </CardLevel>
+    <CardA href={`card/${props.card.idName}`}>
+      <CardImg
+        src={`${process.env.REACT_APP_BACK_END_API}/images/cards/${props.card.idName}.png`}
+        alt={props.card.idName}
+      />
+      <CardElixir level={props.card.level}>{props.card.elixirCost}</CardElixir>
+      <CardLevel level={props.card.level}>
+        {props.card.level === 9
+          ? `Lvl ${props.card.level}`
+          : `Level ${props.card.level}`}
+      </CardLevel>
+    </CardA>
   </CardWarpper>
 );
 
