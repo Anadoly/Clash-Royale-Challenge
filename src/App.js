@@ -1,13 +1,17 @@
 import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 // import { Logo } from '@images';
 import { GlobalStyles } from '@utilities';
-import { DeckGenerator } from '@scenes';
+import { DeckGenerator, CardDeatils } from '@scenes';
 
 function App() {
   return (
     <section>
       <GlobalStyles />
-      <DeckGenerator />
+      <Switch>
+        <Route exact path="/" component={DeckGenerator} />
+        <Route exact path="/card/:idName" component={CardDeatils} />
+      </Switch>
     </section>
   );
 }
