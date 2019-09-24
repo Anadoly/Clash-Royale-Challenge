@@ -24,6 +24,7 @@ export default class DeckGenerator extends Component {
     return (
       <div>
         <p>DeckGenerator</p>
+        {!cards && <p>Loading...</p>}
         {cards && <Cards cards={cards} />}
       </div>
     );

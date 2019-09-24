@@ -6,7 +6,6 @@ const GlobalStyles = () => {
     <Global
       styles={css`
         html {
-          direction: rtl;
           box-sizing: border-box;
           img {
             max-width: 100%;
