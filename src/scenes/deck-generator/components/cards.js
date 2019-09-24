@@ -1,10 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from '@emotion/styled/macro';
 
 import { Card } from '@components';
 
+const CardsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  width: 900px;
+  margin: auto;
+`;
+
 const Cards = props => (
-  <>
+  <CardsWrapper>
     {props.cards.map(card => {
       switch (card.rarity) {
         case 'Common':
@@ -25,7 +33,7 @@ const Cards = props => (
       }
       return <Card key={JSON.stringify(card)} card={card} />;
     })}
-  </>
+  </CardsWrapper>
 );
 
 export default Cards;
