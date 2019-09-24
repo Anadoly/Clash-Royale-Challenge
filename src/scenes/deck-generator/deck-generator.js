@@ -162,7 +162,6 @@ export default class DeckGenerator extends Component {
 
   render() {
     const { cards, deckStatistics } = this.state;
-    console.log(deckStatistics);
     return (
       <DeckGeneratorWrapper>
         <H1>DeckGenerator</H1>
