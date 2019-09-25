@@ -76,7 +76,7 @@ export default class SelectCard extends PureComponent {
   };
   render() {
     const { common, rare, epic, legendary } = this.state;
-    const { handleingAddedCard } = this.props;
+    const { handleingAddedCard, selectMode } = this.props;
     return (
       <div>
         <button onClick={this.openModal}> Add New Card</button>
@@ -90,6 +90,7 @@ export default class SelectCard extends PureComponent {
           <CardsTabs
             tabs={[common, rare, epic, legendary]}
             handleingAddedCard={handleingAddedCard}
+            selectMode={selectMode}
           />
         </Modal>
       </div>
@@ -98,4 +99,5 @@ export default class SelectCard extends PureComponent {
 }
 SelectCard.propTypes = {
   handleingAddedCard: PropTypes.func.isRequired,
+  selectMode: PropTypes.bool,
 };

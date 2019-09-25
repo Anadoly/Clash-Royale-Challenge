@@ -51,7 +51,10 @@ const Cards = props => {
         );
       })}
       {selectMode && cards.length < 8 && (
-        <SelectCard handleingAddedCard={handleingAddedCard} />
+        <SelectCard
+          handleingAddedCard={handleingAddedCard}
+          selectMode={selectMode}
+        />
       )}
     </CardsWrapper>
   );
