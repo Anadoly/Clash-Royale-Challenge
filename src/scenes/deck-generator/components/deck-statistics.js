@@ -72,7 +72,7 @@ const DeckStatistics = props => {
             width={cardTypes.troopPercentage}
             color={'rgb(0, 134, 191)'}
           >
-            <p>{cardTypes.troop}</p>
+            <p>{cardTypes.troop} Troop</p>
           </StatisticsItem>
         )}
         {cardTypes.spell > 0 && (
@@ -80,7 +80,7 @@ const DeckStatistics = props => {
             width={cardTypes.spellPercentage}
             color={'rgb(149, 127, 211)'}
           >
-            <p>{cardTypes.spell}</p>
+            <p>{cardTypes.spell} Spell</p>
           </StatisticsItem>
         )}
         {cardTypes.building > 0 && (
@@ -88,7 +88,7 @@ const DeckStatistics = props => {
             width={cardTypes.buildingPercentage}
             color={'rgb(247, 107, 181)'}
           >
-            <p>{cardTypes.building}</p>
+            <p>{cardTypes.building} Building</p>
           </StatisticsItem>
         )}
       </StatisticsBar>
@@ -98,7 +98,7 @@ const DeckStatistics = props => {
             width={cardRarities.commonPercentage}
             color={'rgb(0, 134, 191)'}
           >
-            <p>{cardRarities.common}</p>
+            <p>{cardRarities.common} Common</p>
           </StatisticsItem>
         )}
         {cardRarities.rare > 0 && (
@@ -106,7 +106,7 @@ const DeckStatistics = props => {
             width={cardRarities.rarePercentage}
             color={'rgb(149, 127, 211)'}
           >
-            <p>{cardRarities.rare}</p>
+            <p>{cardRarities.rare} Rare</p>
           </StatisticsItem>
         )}
         {cardRarities.epic > 0 && (
@@ -114,7 +114,7 @@ const DeckStatistics = props => {
             width={cardRarities.epicPercentage}
             color={'rgb(247, 107, 181)'}
           >
-            <p>{cardRarities.epic}</p>
+            <p>{cardRarities.epic} Epic</p>
           </StatisticsItem>
         )}
         {cardRarities.legendary > 0 && (
@@ -122,7 +122,7 @@ const DeckStatistics = props => {
             width={cardRarities.legendaryPercentage}
             color={'rgb(255, 112, 113)'}
           >
-            <p>{cardRarities.legendary}</p>
+            <p>{cardRarities.legendary} Legendary</p>
           </StatisticsItem>
         )}
       </StatisticsBar>

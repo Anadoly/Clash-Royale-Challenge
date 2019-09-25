@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { default as Cards } from './components/cards';
-import { default as DeckStatistics } from './components/deck-statistics';
+import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
 
-import { Container, Title } from '@utilities';
+import { default as Cards } from './components/cards';
+import { default as DeckStatistics } from './components/deck-statistics';
+import { Container, Title, colors } from '@utilities';
 
 const DeckGeneratorWrapper = styled.div`
   ${Container}
@@ -13,15 +14,38 @@ const H1 = styled.h1`
   ${Title}
 `;
 
+const SelectModeButtonWrapper = styled.div`
+  display: block;
+  text-align: center;
+`;
+
+const SelectModeButton = styled.a`
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 20px auto;
+  background-color: rgb(247, 107, 181);
+  border-radius: 20px;
+  color: ${colors.primaryColor};
+  text-decoration: none;
+`;
+
 export default class DeckGenerator extends Component {
   state = {
-    cards: null,
+    cards: [],
     deckStatistics: null,
+    selectMode: false,
   };
   componentDidMount() {
-    fetch(`${process.env.REACT_APP_BACK_END_API}/api/cards`)
-      .then(response => response.json())
-      .then(data => this.cardArrayGenerator(data));
+    const {
+      match: { path },
+    } = this.props;
+    if (path === '/select-mode') {
+      this.setState({ selectMode: true });
+    } else {
+      fetch(`${process.env.REACT_APP_BACK_END_API}/api/cards`)
+        .then(response => response.json())
+        .then(data => this.cardArrayGenerator(data));
+    }
   }
 
   deckStatistics = cards => {
@@ -161,18 +185,27 @@ export default class DeckGenerator extends Component {
   };
 
   render() {
-    const { cards, deckStatistics } = this.state;
+    const { cards, deckStatistics, selectMode } = this.state;
+
     return (
       <DeckGeneratorWrapper>
         <H1>DeckGenerator</H1>
         {!cards && <p>Loading...</p>}
-        {cards && (
-          <>
-            <Cards cards={cards} />
-            <DeckStatistics deckStatistics={deckStatistics} />
-          </>
+
+        <Cards cards={cards} selectMode={selectMode} />
+        {cards && deckStatistics && (
+          <DeckStatistics deckStatistics={deckStatistics} />
+        )}
+        {!selectMode && (
+          <SelectModeButtonWrapper>
+            <SelectModeButton href="/select-mode">Select Mode</SelectModeButton>
+          </SelectModeButtonWrapper>
         )}
       </DeckGeneratorWrapper>
     );
   }
 }
+
+DeckGenerator.propTypes = {
+  match: PropTypes.object,
+};
