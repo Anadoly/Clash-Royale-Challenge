@@ -60,7 +60,7 @@ const RemoveButton = styled.button`
   height: 40px;
   position: absolute;
   right: -15px;
-  top: ${props => (props.level === 9 ? '-7px' : '-10px')};
+  top: ${props => (props.level === 9 ? '7px' : '-10px')};
 `;
 
 const Card = props => {
