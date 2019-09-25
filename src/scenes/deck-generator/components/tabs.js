@@ -6,7 +6,7 @@ import 'react-tabs/style/react-tabs.css';
 import { Card } from '@components';
 
 const CardsTabs = props => {
-  const { tabs } = props;
+  const { tabs, handleingAddedCard } = props;
   return (
     <Tabs>
       <TabList>
@@ -20,7 +20,12 @@ const CardsTabs = props => {
         <TabPanel key={JSON.stringify(tab)}>
           {tab.map(card => {
             return (
-              <Card key={JSON.stringify(card)} card={card} selectMode={true} />
+              <Card
+                key={JSON.stringify(card)}
+                card={card}
+                selectMode={true}
+                handleingAddedCard={handleingAddedCard}
+              />
             );
           })}
         </TabPanel>
@@ -31,6 +36,7 @@ const CardsTabs = props => {
 
 CardsTabs.propTypes = {
   tabs: PropTypes.array.isRequired,
+  handleingAddedCard: PropTypes.func.isRequired,
 };
 
 export default CardsTabs;

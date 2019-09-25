@@ -13,7 +13,13 @@ const CardsWrapper = styled.div`
 `;
 
 const Cards = props => {
-  const { cards, selectMode } = props;
+  const {
+    cards,
+    selectMode,
+    handleingAddedCard,
+    handleingRemoveCard,
+    canRemove,
+  } = props;
 
   return (
     <CardsWrapper>
@@ -35,9 +41,18 @@ const Cards = props => {
             card.level = 0;
             break;
         }
-        return <Card key={JSON.stringify(card)} card={card} />;
+        return (
+          <Card
+            key={JSON.stringify(card)}
+            card={card}
+            handleingRemoveCard={handleingRemoveCard}
+            canRemove={canRemove}
+          />
+        );
       })}
-      {selectMode && cards.length < 7 && <SelectCard />}
+      {selectMode && cards.length < 8 && (
+        <SelectCard handleingAddedCard={handleingAddedCard} />
+      )}
     </CardsWrapper>
   );
 };
@@ -47,4 +62,7 @@ export default Cards;
 Cards.propTypes = {
   cards: PropTypes.array.isRequired,
   selectMode: PropTypes.bool.isRequired,
+  handleingAddedCard: PropTypes.func,
+  handleingRemoveCard: PropTypes.func,
+  canRemove: PropTypes.bool,
 };

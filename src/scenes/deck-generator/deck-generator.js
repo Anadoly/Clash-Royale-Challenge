@@ -34,13 +34,14 @@ export default class DeckGenerator extends Component {
     cards: [],
     deckStatistics: null,
     selectMode: false,
+    canRemove: false,
   };
   componentDidMount() {
     const {
       match: { path },
     } = this.props;
     if (path === '/select-mode') {
-      this.setState({ selectMode: true });
+      this.setState({ selectMode: true, canRemove: true });
     } else {
       fetch(`${process.env.REACT_APP_BACK_END_API}/api/cards`)
         .then(response => response.json())
@@ -48,29 +49,37 @@ export default class DeckGenerator extends Component {
     }
   }
 
-  deckStatistics = cards => {
-    const elixirCostStatistics = this.averageElixirCost(cards);
-    const cycleCostStatistics = this.minimumCycleCost(cards);
-    const cardTypes = this.cardTypes(cards);
-    const cardRarities = this.cardRarities(cards);
-    this.setState({
-      cards,
-      deckStatistics: {
-        elixirCostStatistics,
-        cycleCostStatistics,
-        cardTypes,
-        cardRarities,
-      },
-    });
+  deckStatistics = (cards, cardsCount) => {
+    if (cardsCount > 0) {
+      const elixirCostStatistics = this.averageElixirCost(cards, cardsCount);
+      const cycleCostStatistics = this.minimumCycleCost(cards);
+      const cardTypes = this.cardTypes(cards, cardsCount);
+      const cardRarities = this.cardRarities(cards, cardsCount);
+      this.setState({
+        cards,
+        deckStatistics: {
+          elixirCostStatistics,
+          cycleCostStatistics,
+          cardTypes,
+          cardRarities,
+        },
+      });
+    } else {
+      this.setState({
+        cards,
+        deckStatistics: null,
+      });
+    }
   };
 
-  averageElixirCost = cards => {
+  averageElixirCost = (cards, cardsCount) => {
     const ElixirCostStatistics = {};
     ElixirCostStatistics.totalCost = 0;
     cards.forEach(card => {
       ElixirCostStatistics.totalCost += card.elixirCost;
     });
-    ElixirCostStatistics.averageElixirCost = ElixirCostStatistics.totalCost / 8;
+    ElixirCostStatistics.averageElixirCost =
+      ElixirCostStatistics.totalCost / cardsCount;
     ElixirCostStatistics.averageElixirCostPercentage = this.handlePercent(
       ElixirCostStatistics.averageElixirCost,
       ElixirCostStatistics.totalCost
@@ -98,7 +107,7 @@ export default class DeckGenerator extends Component {
     return cycleCostStatistics;
   };
 
-  cardTypes = cards => {
+  cardTypes = (cards, cardsCount) => {
     const cardTypes = {
       troop: 0,
       troopPercentage: 0,
@@ -123,14 +132,17 @@ export default class DeckGenerator extends Component {
           break;
       }
     });
-    cardTypes.troopPercentage = this.handlePercent(cardTypes.troop, 8);
-    cardTypes.spellPercentage = this.handlePercent(cardTypes.spell, 8);
-    cardTypes.buildingPercentage = this.handlePercent(cardTypes.building, 8);
+    cardTypes.troopPercentage = this.handlePercent(cardTypes.troop, cardsCount);
+    cardTypes.spellPercentage = this.handlePercent(cardTypes.spell, cardsCount);
+    cardTypes.buildingPercentage = this.handlePercent(
+      cardTypes.building,
+      cardsCount
+    );
 
     return cardTypes;
   };
 
-  cardRarities = cards => {
+  cardRarities = (cards, cardsCount) => {
     const cardRarities = {
       common: 0,
       commonPercentage: 0,
@@ -160,12 +172,21 @@ export default class DeckGenerator extends Component {
           break;
       }
     });
-    cardRarities.commonPercentage = this.handlePercent(cardRarities.common, 8);
-    cardRarities.rarePercentage = this.handlePercent(cardRarities.rare, 8);
-    cardRarities.epicPercentage = this.handlePercent(cardRarities.epic, 8);
+    cardRarities.commonPercentage = this.handlePercent(
+      cardRarities.common,
+      cardsCount
+    );
+    cardRarities.rarePercentage = this.handlePercent(
+      cardRarities.rare,
+      cardsCount
+    );
+    cardRarities.epicPercentage = this.handlePercent(
+      cardRarities.epic,
+      cardsCount
+    );
     cardRarities.legendaryPercentage = this.handlePercent(
       cardRarities.legendary,
-      8
+      cardsCount
     );
     return cardRarities;
   };
@@ -180,19 +201,40 @@ export default class DeckGenerator extends Component {
       return 0.8 - Math.random();
     });
     const selectedCards = shuffledCards.slice(0, LenthOfArryGenerated);
-    this.deckStatistics(selectedCards);
+    this.deckStatistics(selectedCards, 8);
     return selectedCards;
   };
 
+  handleingAddedCard = card => {
+    const { cards } = this.state;
+    if (cards.includes(card)) {
+      return alert(`you can't add same card twice`);
+    } else {
+      cards.push(card);
+      this.deckStatistics(cards, cards.length);
+    }
+  };
+  handleingRemoveCard = removedCard => {
+    const cards = this.state.cards.filter(function(card) {
+      return removedCard._id !== card._id;
+    });
+    this.deckStatistics(cards, cards.length);
+  };
   render() {
-    const { cards, deckStatistics, selectMode } = this.state;
+    const { cards, deckStatistics, selectMode, canRemove } = this.state;
 
     return (
       <DeckGeneratorWrapper>
         <H1>DeckGenerator</H1>
         {!cards && <p>Loading...</p>}
 
-        <Cards cards={cards} selectMode={selectMode} />
+        <Cards
+          cards={cards}
+          selectMode={selectMode}
+          handleingAddedCard={this.handleingAddedCard}
+          handleingRemoveCard={this.handleingRemoveCard}
+          canRemove={canRemove}
+        />
         {cards && deckStatistics && (
           <DeckStatistics deckStatistics={deckStatistics} />
         )}

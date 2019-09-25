@@ -6,8 +6,8 @@ import { colors } from '@utilities';
 import { Elixir } from '@images';
 
 const CardWarpper = styled.div`
-  width: 150px;
-  height: 200px;
+  width: ${props => (props.selectMode ? '75px' : '150px')};
+  height: ${props => (props.selectMode ? '100px' : '200px')};
   position: relative;
   margin: 20px;
   color: ${colors.primaryColor};
@@ -31,7 +31,6 @@ const CardElixir = styled.p`
   height: 40px;
   position: absolute;
   background-size: cover;
-  z-index: 2;
   top: ${props => (props.level === 9 ? '-10px' : '-30px')};
   left: -10px;
   text-align: center;
@@ -46,32 +45,54 @@ const CardLevel = styled.p`
   width: 100%;
   text-align: center;
   font-weight: 900;
-  font-size: 24px;
+  font-size: ${props => (props.selectMode ? '12px' : '24px')};
   margin: 0;
   padding-bottom: ${props => (props.level === 9 ? '20px' : '10px')};
   background: ${props => (props.level === 9 ? '' : 'rgba(0, 0, 0, 0.5)')};
   border-radius: ${props => (props.level === 9 ? '0' : ' 0 0 20px 20px')};
 `;
 
-const Card = props => (
-  <CardWarpper key={props.card._id}>
-    <CardA href={`card/${props.card.idName}`}>
-      <CardImg
-        src={`${process.env.REACT_APP_BACK_END_API}/images/cards/${props.card.idName}.png`}
-        alt={props.card.idName}
-      />
-      <CardElixir level={props.card.level}>{props.card.elixirCost}</CardElixir>
-      <CardLevel level={props.card.level}>
-        {props.card.level === 9
-          ? `Lvl ${props.card.level}`
-          : `Level ${props.card.level}`}
-      </CardLevel>
-    </CardA>
-  </CardWarpper>
-);
+const Card = props => {
+  const { card, selectMode, canRemove } = props;
+
+  const handleAddCard = (card, selectMode) => {
+    if (!selectMode) {
+      return;
+    } else {
+      props.handleingAddedCard(card);
+    }
+  };
+  const handleRemoveCard = card => {
+    props.handleingRemoveCard(card);
+  };
+  return (
+    <CardWarpper key={card._id} selectMode={selectMode}>
+      <CardA
+        href={selectMode ? '#!' : `card/${card.idName}`}
+        onClick={() => handleAddCard(card, selectMode)}
+      >
+        <CardImg
+          src={`${process.env.REACT_APP_BACK_END_API}/images/cards/${card.idName}.png`}
+          alt={card.idName}
+        />
+        <CardElixir level={card.level}>{card.elixirCost}</CardElixir>
+        <CardLevel level={card.level} selectMode={selectMode}>
+          {card.level === 9 ? `Lvl ${card.level}` : `Level ${card.level}`}
+        </CardLevel>
+      </CardA>
+      {canRemove && handleRemoveCard && (
+        <button onClick={() => handleRemoveCard(card)}>remove</button>
+      )}
+    </CardWarpper>
+  );
+};
 
 export default Card;
 
 Card.propTypes = {
   card: PropTypes.object.isRequired,
+  selectMode: PropTypes.bool,
+  handleingAddedCard: PropTypes.func,
+  handleingRemoveCard: PropTypes.func,
+  canRemove: PropTypes.bool,
 };

@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import Modal from 'react-modal';
+import PropTypes from 'prop-types';
 
 import CardsTabs from './tabs';
 
@@ -13,6 +14,7 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
     width: '760px',
     height: '500px',
+    zIndex: '10',
   },
 };
 
@@ -69,30 +71,31 @@ export default class SelectCard extends PureComponent {
     this.setState({ modalIsOpen: true });
   };
 
-  afterOpenModal = () => {
-    // references are now sync'd and can be accessed.
-    console.log('hamda');
-  };
-
   closeModal = () => {
     this.setState({ modalIsOpen: false });
   };
   render() {
     const { common, rare, epic, legendary } = this.state;
+    const { handleingAddedCard } = this.props;
     return (
       <div>
         <button onClick={this.openModal}> Add New Card</button>
         <Modal
           isOpen={this.state.modalIsOpen}
-          onAfterOpen={this.afterOpenModal}
           onRequestClose={this.closeModal}
           style={customStyles}
           contentLabel="Add Card Modal"
         >
           <button onClick={this.closeModal}>close</button>
-          <CardsTabs tabs={[common, rare, epic, legendary]} />
+          <CardsTabs
+            tabs={[common, rare, epic, legendary]}
+            handleingAddedCard={handleingAddedCard}
+          />
         </Modal>
       </div>
     );
   }
 }
+SelectCard.propTypes = {
+  handleingAddedCard: PropTypes.func.isRequired,
+};
