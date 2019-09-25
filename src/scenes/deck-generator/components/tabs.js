@@ -2,9 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import styled from '@emotion/styled/macro';
 
 import { Card } from '@components';
 
+const CardsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  width: 760px;
+  margin: auto;
+`;
 const CardsTabs = props => {
   const { tabs, handleingAddedCard, selectMode } = props;
   return (
@@ -18,16 +25,18 @@ const CardsTabs = props => {
 
       {tabs.map(tab => (
         <TabPanel key={JSON.stringify(tab)}>
-          {tab.map(card => {
-            return (
-              <Card
-                key={JSON.stringify(card)}
-                card={card}
-                selectMode={selectMode}
-                handleingAddedCard={handleingAddedCard}
-              />
-            );
-          })}
+          <CardsWrapper>
+            {tab.map(card => {
+              return (
+                <Card
+                  key={JSON.stringify(card)}
+                  card={card}
+                  selectMode={selectMode}
+                  handleingAddedCard={handleingAddedCard}
+                />
+              );
+            })}
+          </CardsWrapper>
         </TabPanel>
       ))}
     </Tabs>

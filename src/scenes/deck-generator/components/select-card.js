@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
 import Modal from 'react-modal';
 import PropTypes from 'prop-types';
+import styled from '@emotion/styled/macro';
 
 import CardsTabs from './tabs';
+import { CloseIcon, addIcon } from '@images';
 
 const customStyles = {
   content: {
@@ -12,12 +14,33 @@ const customStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
-    width: '760px',
+    width: '800px',
     height: '500px',
     zIndex: '10',
   },
 };
 
+const CloseButton = styled.button`
+  display: block;
+  margin-left: auto;
+  width: 35px;
+  height: 35px;
+  border: none;
+  background: none;
+  cursor: pointer;
+`;
+const AddCard = styled.button`
+  width: 150px;
+  height: 200px;
+  margin: 20px;
+  cursor: pointer;
+  border: dashed rgba(127, 127, 127, 1);
+  background: #fff;
+  img {
+    width: 40px;
+    height: 40px;
+  }
+`;
 Modal.setAppElement('#root');
 
 export default class SelectCard extends PureComponent {
@@ -79,14 +102,18 @@ export default class SelectCard extends PureComponent {
     const { handleingAddedCard, selectMode } = this.props;
     return (
       <div>
-        <button onClick={this.openModal}> Add New Card</button>
+        <AddCard onClick={this.openModal}>
+          <img src={addIcon} alt="Close Button" />
+        </AddCard>
         <Modal
           isOpen={this.state.modalIsOpen}
           onRequestClose={this.closeModal}
           style={customStyles}
           contentLabel="Add Card Modal"
         >
-          <button onClick={this.closeModal}>close</button>
+          <CloseButton onClick={this.closeModal}>
+            <img src={CloseIcon} alt="Close Button" />
+          </CloseButton>
           <CardsTabs
             tabs={[common, rare, epic, legendary]}
             handleingAddedCard={handleingAddedCard}

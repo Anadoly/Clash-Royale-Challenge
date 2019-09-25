@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-// import { Logo } from '@images';
 import { GlobalStyles } from '@utilities';
 import { DeckGenerator, CardDeatils } from '@scenes';
 

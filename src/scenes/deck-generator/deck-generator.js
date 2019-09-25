@@ -5,6 +5,7 @@ import styled from '@emotion/styled/macro';
 import { default as Cards } from './components/cards';
 import { default as DeckStatistics } from './components/deck-statistics';
 import { Container, Title, colors } from '@utilities';
+import { Logo } from '@images';
 
 const DeckGeneratorWrapper = styled.div`
   ${Container}
@@ -12,6 +13,12 @@ const DeckGeneratorWrapper = styled.div`
 
 const H1 = styled.h1`
   ${Title}
+`;
+
+const Header = styled.a`
+  text-align: center;
+  margin: 25px auto;
+  display: block;
 `;
 
 const SelectModeButtonWrapper = styled.div`
@@ -225,6 +232,9 @@ export default class DeckGenerator extends Component {
 
     return (
       <DeckGeneratorWrapper>
+        <Header href="/">
+          <img src={Logo} alt="Clash Royakye Logo" />
+        </Header>
         <H1>DeckGenerator</H1>
         {!cards && <p>Loading...</p>}
 

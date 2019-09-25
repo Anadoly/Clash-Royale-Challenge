@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
 
 import { colors } from '@utilities';
-import { Elixir } from '@images';
+import { Elixir, RemoveIcon } from '@images';
 
 const CardWarpper = styled.div`
   width: ${props => (props.selectMode ? '75px' : '150px')};
@@ -52,6 +52,17 @@ const CardLevel = styled.p`
   border-radius: ${props => (props.level === 9 ? '0' : ' 0 0 20px 20px')};
 `;
 
+const RemoveButton = styled.button`
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  right: -15px;
+  top: ${props => (props.level === 9 ? '-7px' : '-10px')};
+`;
+
 const Card = props => {
   const { card, selectMode, canRemove } = props;
 
@@ -81,7 +92,9 @@ const Card = props => {
         </CardLevel>
       </CardA>
       {canRemove && handleRemoveCard && (
-        <button onClick={() => handleRemoveCard(card)}>remove</button>
+        <RemoveButton level={card.level} onClick={() => handleRemoveCard(card)}>
+          <img src={RemoveIcon} alt="Close Button" />
+        </RemoveButton>
       )}
     </CardWarpper>
   );
