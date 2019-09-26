@@ -47,7 +47,8 @@ export default class SelectCard extends PureComponent {
   componentDidMount() {
     fetch(`${process.env.REACT_APP_BACK_END_API}/api/cards`)
       .then(response => response.json())
-      .then(data => this.generateRarityArray(data));
+      .then(data => this.generateRarityArray(data))
+      .catch(err => alert(err));
   }
 
   static propTypes = {};

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
+import queryString from 'query-string';
 
 import { default as Cards } from './components/cards';
 import { default as DeckStatistics } from './components/deck-statistics';
@@ -42,21 +43,45 @@ export default class DeckGenerator extends Component {
     deckStatistics: null,
     selectMode: false,
     canRemove: false,
+    cardsIds: [],
   };
   componentDidMount() {
     const {
       match: { path },
+      location: { search },
     } = this.props;
     if (path === '/select-mode') {
       this.setState({ selectMode: true, canRemove: true });
+    } else if (search !== '') {
+      const values = queryString.parse(search);
+      const cardsIds = values.cards.split(',');
+      fetch(`${process.env.REACT_APP_BACK_END_API}/api/cards`)
+        .then(response => response.json())
+        .then(data => this.sharedCardsArray(data, cardsIds))
+        .catch(err => alert(err));
     } else {
       fetch(`${process.env.REACT_APP_BACK_END_API}/api/cards`)
         .then(response => response.json())
-        .then(data => this.cardArrayGenerator(data));
+        .then(data => this.cardArrayGenerator(data))
+        .catch(err => alert(err));
     }
   }
 
+  sharedCardsArray = (cardsArr, cardsIds) => {
+    const cards = [];
+    cardsIds.forEach(cardId => {
+      const card = cardsArr.filter(card => {
+        return cardId === card._id;
+      });
+      cards.push(card[0]);
+    });
+    this.deckStatistics(cards, cards.length);
+  };
   deckStatistics = (cards, cardsCount) => {
+    const cardsIds = [];
+    cards.forEach(card => {
+      cardsIds.push(card._id);
+    });
     if (cardsCount > 0) {
       const elixirCostStatistics = this.averageElixirCost(cards, cardsCount);
       const cycleCostStatistics = this.minimumCycleCost(cards);
@@ -70,11 +95,13 @@ export default class DeckGenerator extends Component {
           cardTypes,
           cardRarities,
         },
+        cardsIds,
       });
     } else {
       this.setState({
         cards,
         deckStatistics: null,
+        cardsIds,
       });
     }
   };
@@ -228,7 +255,13 @@ export default class DeckGenerator extends Component {
     this.deckStatistics(cards, cards.length);
   };
   render() {
-    const { cards, deckStatistics, selectMode, canRemove } = this.state;
+    const {
+      cards,
+      deckStatistics,
+      selectMode,
+      canRemove,
+      cardsIds,
+    } = this.state;
 
     return (
       <DeckGeneratorWrapper>
@@ -253,6 +286,13 @@ export default class DeckGenerator extends Component {
             <SelectModeButton href="/select-mode">Select Mode</SelectModeButton>
           </SelectModeButtonWrapper>
         )}
+        {cards.length === 8 && (
+          <SelectModeButtonWrapper>
+            <SelectModeButton href={`?cards=${cardsIds}`} target="_blank">
+              Share Your Deck
+            </SelectModeButton>
+          </SelectModeButtonWrapper>
+        )}
       </DeckGeneratorWrapper>
     );
   }
@@ -260,4 +300,5 @@ export default class DeckGenerator extends Component {
 
 DeckGenerator.propTypes = {
   match: PropTypes.object,
+  location: PropTypes.object,
 };
