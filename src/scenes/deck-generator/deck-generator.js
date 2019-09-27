@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Modal from 'react-modal';
 
-import { fetchCards, fetchSharedCards } from '../../actions/card-actions';
+import { fetchCards, fetchSharedCards } from '@actions/card-actions';
 
 import { default as Cards } from './components/cards';
 import { default as DeckStatistics } from './components/deck-statistics';
@@ -48,6 +48,7 @@ const Button = styled.button`
   line-height: 1.5;
   min-width: 180px;
   border: rgb(247, 107, 181);
+  cursor: pointer;
 `;
 const DeckGeneratorWrapper = styled.div`
   ${Container}
@@ -73,6 +74,7 @@ const SharedLink = styled.p`
 `;
 
 Modal.setAppElement('#root');
+
 class DeckGenerator extends PureComponent {
   state = {
     cards: [],
@@ -171,9 +173,9 @@ class DeckGenerator extends PureComponent {
           </CloseButton>
           {cardsIds && (
             <SharedLink>
-              Your Deck on
+              Your Deck on{' '}
               <Link to={`?cards=${cardsIds}`} target="_blank">
-                Link
+                Here
               </Link>
             </SharedLink>
           )}

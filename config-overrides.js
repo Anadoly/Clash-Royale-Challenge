@@ -14,6 +14,8 @@ module.exports = override(
     '@utilities': path.resolve(__dirname, 'src/utilities'),
     '@scenes': path.resolve(__dirname, 'src/scenes'),
     '@images': path.resolve(__dirname, 'src/images'),
+    '@actions': path.resolve(__dirname, 'src/actions'),
+    '@reducers': path.resolve(__dirname, 'src/reducers'),
   }),
   addLessLoader({
     javascriptEnabled: true,

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
 import { connect } from 'react-redux';
 
-import { fetchCard } from '../../actions/card-actions';
-import { Container, Title, colors } from '@utilities';
+import { fetchCard } from '@actions/card-actions';
+import { Container, Title, colors, Loading } from '@utilities';
 
 const CardDeatilsWrapper = styled.div`
   ${Container}
@@ -66,7 +66,7 @@ class CardDeatils extends PureComponent {
     const cardIsEmpty = Object.keys(card).length === 0;
     return (
       <section>
-        {cardIsEmpty && <p>Loading...</p>}
+        {cardIsEmpty && <Loading />}
         {!cardIsEmpty && (
           <CardDeatilsWrapper>
             <H1>{card.name}</H1>
