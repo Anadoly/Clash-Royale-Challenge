@@ -99,7 +99,7 @@ export default class SelectCard extends PureComponent {
     this.setState({ modalIsOpen: false });
   };
   render() {
-    const { common, rare, epic, legendary } = this.state;
+    const { common, rare, epic, legendary, modalIsOpen } = this.state;
     const { handleingAddedCard, selectMode } = this.props;
     return (
       <div>
@@ -107,7 +107,7 @@ export default class SelectCard extends PureComponent {
           <img src={addIcon} alt="Close Button" />
         </AddCard>
         <Modal
-          isOpen={this.state.modalIsOpen}
+          isOpen={modalIsOpen}
           onRequestClose={this.closeModal}
           style={customStyles}
           contentLabel="Add Card Modal"

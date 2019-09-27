@@ -20,7 +20,6 @@ const Cards = props => {
     handleingRemoveCard,
     canRemove,
   } = props;
-
   return (
     <CardsWrapper>
       {cards.map(card => {

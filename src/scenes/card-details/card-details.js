@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
+import { connect } from 'react-redux';
 
+import { fetchCard } from '../../actions/card-actions';
 import { Container, Title, colors } from '@utilities';
 
 const CardDeatilsWrapper = styled.div`
@@ -43,11 +45,7 @@ const CardImg = styled.img`
   width: 100%;
 `;
 
-export default class CardDeatils extends PureComponent {
-  state = {
-    card: null,
-  };
-
+class CardDeatils extends PureComponent {
   componentDidMount() {
     const {
       match: { path },
@@ -57,20 +55,19 @@ export default class CardDeatils extends PureComponent {
         match: {
           params: { idName },
         },
+        fetchCard,
       } = this.props;
-      fetch(`${process.env.REACT_APP_BACK_END_API}/api/cards/${idName}`)
-        .then(response => response.json())
-        .then(response => this.setState({ card: response }));
+      fetchCard(idName);
     }
   }
 
   render() {
-    const { card } = this.state;
-
+    const { card } = this.props;
+    const cardIsEmpty = Object.keys(card).length === 0;
     return (
       <section>
-        {!card && <p>Loading...</p>}
-        {card && (
+        {cardIsEmpty && <p>Loading...</p>}
+        {!cardIsEmpty && (
           <CardDeatilsWrapper>
             <H1>{card.name}</H1>
             <CardWrapper>
@@ -102,6 +99,17 @@ export default class CardDeatils extends PureComponent {
   }
 }
 
+const mapStateToProps = state => ({
+  card: state.cards.card,
+});
+
+export default connect(
+  mapStateToProps,
+  { fetchCard }
+)(CardDeatils);
+
 CardDeatils.propTypes = {
   match: PropTypes.object.isRequired,
+  fetchCard: PropTypes.func,
+  card: PropTypes.object.isRequired,
 };

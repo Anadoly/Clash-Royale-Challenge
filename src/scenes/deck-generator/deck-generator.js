@@ -1,13 +1,54 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
 import queryString from 'query-string';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import Modal from 'react-modal';
+
+import { fetchCards, fetchSharedCards } from '../../actions/card-actions';
 
 import { default as Cards } from './components/cards';
 import { default as DeckStatistics } from './components/deck-statistics';
 import { Container, Title, colors } from '@utilities';
-import { Logo } from '@images';
+import { CloseIcon } from '@images';
 
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    width: '800px',
+    height: '300px',
+  },
+};
+
+const CloseButton = styled.button`
+  display: block;
+  margin-left: auto;
+  width: 35px;
+  height: 35px;
+  border: none;
+  background: none;
+  cursor: pointer;
+`;
+
+const Button = styled.button`
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 20px auto;
+  background-color: rgb(247, 107, 181);
+  border-radius: 20px;
+  color: ${colors.primaryColor};
+  text-decoration: none;
+  font-size: 16px;
+  line-height: 1.5;
+  min-width: 180px;
+  border: rgb(247, 107, 181);
+`;
 const DeckGeneratorWrapper = styled.div`
   ${Container}
 `;
@@ -16,261 +57,89 @@ const H1 = styled.h1`
   ${Title}
 `;
 
-const Header = styled.a`
-  text-align: center;
-  margin: 25px auto;
-  display: block;
-`;
-
 const SelectModeButtonWrapper = styled.div`
   display: block;
   text-align: center;
 `;
 
-const SelectModeButton = styled.a`
-  display: inline-block;
-  padding: 10px 20px;
-  margin: 20px auto;
-  background-color: rgb(247, 107, 181);
-  border-radius: 20px;
-  color: ${colors.primaryColor};
-  text-decoration: none;
+const SharedLink = styled.p`
+  max-width: 350px;
+  text-align: center;
+  fons-size: 16px;
+  a {
+    color: inherit;
+    font-weight: bold;
+  }
 `;
 
-export default class DeckGenerator extends Component {
+Modal.setAppElement('#root');
+class DeckGenerator extends PureComponent {
   state = {
     cards: [],
-    deckStatistics: null,
     selectMode: false,
     canRemove: false,
     cardsIds: [],
+    modalIsOpen: false,
   };
+
   componentDidMount() {
     const {
-      match: { path },
       location: { search },
+      fetchCards,
+      fetchSharedCards,
     } = this.props;
-    if (path === '/select-mode') {
-      this.setState({ selectMode: true, canRemove: true });
-    } else if (search !== '') {
+
+    if (search !== '') {
       const values = queryString.parse(search);
       const cardsIds = values.cards.split(',');
-      fetch(`${process.env.REACT_APP_BACK_END_API}/api/cards`)
-        .then(response => response.json())
-        .then(data => this.sharedCardsArray(data, cardsIds))
-        .catch(err => alert(err));
+      fetchSharedCards(cardsIds);
     } else {
-      fetch(`${process.env.REACT_APP_BACK_END_API}/api/cards`)
-        .then(response => response.json())
-        .then(data => this.cardArrayGenerator(data))
-        .catch(err => alert(err));
+      fetchCards();
     }
   }
 
-  sharedCardsArray = (cardsArr, cardsIds) => {
-    const cards = [];
-    cardsIds.forEach(cardId => {
-      const card = cardsArr.filter(card => {
-        return cardId === card._id;
-      });
-      cards.push(card[0]);
-    });
-    this.deckStatistics(cards, cards.length);
+  closeModal = () => {
+    this.setState({ modalIsOpen: false });
   };
-  deckStatistics = (cards, cardsCount) => {
+
+  shareDeck = cards => {
     const cardsIds = [];
     cards.forEach(card => {
       cardsIds.push(card._id);
     });
-    if (cardsCount > 0) {
-      const elixirCostStatistics = this.averageElixirCost(cards, cardsCount);
-      const cycleCostStatistics = this.minimumCycleCost(cards);
-      const cardTypes = this.cardTypes(cards, cardsCount);
-      const cardRarities = this.cardRarities(cards, cardsCount);
-      this.setState({
-        cards,
-        deckStatistics: {
-          elixirCostStatistics,
-          cycleCostStatistics,
-          cardTypes,
-          cardRarities,
-        },
-        cardsIds,
-      });
-    } else {
-      this.setState({
-        cards,
-        deckStatistics: null,
-        cardsIds,
-      });
-    }
+    this.setState({ cardsIds, modalIsOpen: true });
   };
-
-  averageElixirCost = (cards, cardsCount) => {
-    const ElixirCostStatistics = {};
-    ElixirCostStatistics.totalCost = 0;
-    cards.forEach(card => {
-      ElixirCostStatistics.totalCost += card.elixirCost;
-    });
-    ElixirCostStatistics.averageElixirCost =
-      ElixirCostStatistics.totalCost / cardsCount;
-    ElixirCostStatistics.averageElixirCostPercentage = this.handlePercent(
-      ElixirCostStatistics.averageElixirCost,
-      ElixirCostStatistics.totalCost
-    );
-    return ElixirCostStatistics;
+  handleSelectMode = () => {
+    this.setState({ selectMode: true, canRemove: true });
   };
-
-  minimumCycleCost = cards => {
-    const cycleCostStatistics = {};
-    const cycleCost = [];
-    cards.forEach(card => {
-      cycleCost.push(card.elixirCost);
-    });
-    const sortingCycleCost = cycleCost.sort((a, b) => (a < b ? -1 : 1));
-    cycleCostStatistics.totalCost = sortingCycleCost.reduce((a, b) => a + b, 0);
-    const minmumCycle = sortingCycleCost.slice(0, 4);
-    cycleCostStatistics.minimumCycleCost = minmumCycle.reduce(
-      (a, b) => a + b,
-      0
-    );
-    cycleCostStatistics.minimumCycleCostPercentage = this.handlePercent(
-      cycleCostStatistics.minimumCycleCost,
-      cycleCostStatistics.totalCost
-    );
-    return cycleCostStatistics;
-  };
-
-  cardTypes = (cards, cardsCount) => {
-    const cardTypes = {
-      troop: 0,
-      troopPercentage: 0,
-      spell: 0,
-      spellPercentage: 0,
-      building: 0,
-      buildingPercentage: 0,
-    };
-
-    cards.forEach(card => {
-      switch (card.type) {
-        case 'Troop':
-          cardTypes.troop++;
-          break;
-        case 'Spell':
-          cardTypes.spell++;
-          break;
-        case 'Building':
-          cardTypes.building++;
-          break;
-        default:
-          break;
-      }
-    });
-    cardTypes.troopPercentage = this.handlePercent(cardTypes.troop, cardsCount);
-    cardTypes.spellPercentage = this.handlePercent(cardTypes.spell, cardsCount);
-    cardTypes.buildingPercentage = this.handlePercent(
-      cardTypes.building,
-      cardsCount
-    );
-
-    return cardTypes;
-  };
-
-  cardRarities = (cards, cardsCount) => {
-    const cardRarities = {
-      common: 0,
-      commonPercentage: 0,
-      rare: 0,
-      rarePercentage: 0,
-      epic: 0,
-      epicPercentage: 0,
-      legendary: 0,
-      legendaryPercentage: 0,
-    };
-
-    cards.forEach(card => {
-      switch (card.rarity) {
-        case 'Common':
-          cardRarities.common++;
-          break;
-        case 'Rare':
-          cardRarities.rare++;
-          break;
-        case 'Epic':
-          cardRarities.epic++;
-          break;
-        case 'Legendary':
-          cardRarities.legendary++;
-          break;
-        default:
-          break;
-      }
-    });
-    cardRarities.commonPercentage = this.handlePercent(
-      cardRarities.common,
-      cardsCount
-    );
-    cardRarities.rarePercentage = this.handlePercent(
-      cardRarities.rare,
-      cardsCount
-    );
-    cardRarities.epicPercentage = this.handlePercent(
-      cardRarities.epic,
-      cardsCount
-    );
-    cardRarities.legendaryPercentage = this.handlePercent(
-      cardRarities.legendary,
-      cardsCount
-    );
-    return cardRarities;
-  };
-
-  handlePercent = (number, totleNmber) => {
-    return (number / totleNmber) * 100;
-  };
-
-  cardArrayGenerator = cards => {
-    const LenthOfArryGenerated = 8;
-    const shuffledCards = cards.sort(function() {
-      return 0.8 - Math.random();
-    });
-    const selectedCards = shuffledCards.slice(0, LenthOfArryGenerated);
-    this.deckStatistics(selectedCards, 8);
-    return selectedCards;
-  };
-
   handleingAddedCard = card => {
     const { cards } = this.state;
     if (cards.includes(card)) {
       return alert(`you can't add same card twice`);
     } else {
       cards.push(card);
-      this.deckStatistics(cards, cards.length);
+      this.setState({ cards });
     }
   };
   handleingRemoveCard = removedCard => {
     const cards = this.state.cards.filter(function(card) {
       return removedCard._id !== card._id;
     });
-    this.deckStatistics(cards, cards.length);
+    this.setState({ cards });
   };
   render() {
-    const {
-      cards,
-      deckStatistics,
-      selectMode,
-      canRemove,
-      cardsIds,
-    } = this.state;
+    const { selectMode, canRemove, modalIsOpen, cardsIds } = this.state;
+    let cards;
+    if (selectMode) {
+      cards = this.state.cards;
+    } else {
+      cards = this.props.cards;
+    }
+    const cardNotEmpty = cards.length > 0;
 
     return (
       <DeckGeneratorWrapper>
-        <Header href="/">
-          <img src={Logo} alt="Clash Royakye Logo" />
-        </Header>
-        <H1>DeckGenerator</H1>
-        {!cards && <p>Loading...</p>}
-
+        <H1>Deck Generator</H1>
         <Cards
           cards={cards}
           selectMode={selectMode}
@@ -278,27 +147,54 @@ export default class DeckGenerator extends Component {
           handleingRemoveCard={this.handleingRemoveCard}
           canRemove={canRemove}
         />
-        {cards && deckStatistics && (
-          <DeckStatistics deckStatistics={deckStatistics} />
-        )}
+        {cardNotEmpty && <DeckStatistics cards={cards} />}
         {!selectMode && (
           <SelectModeButtonWrapper>
-            <SelectModeButton href="/select-mode">Select Mode</SelectModeButton>
+            <Button onClick={this.handleSelectMode}>Select Mode</Button>
           </SelectModeButtonWrapper>
         )}
         {cards.length === 8 && (
           <SelectModeButtonWrapper>
-            <SelectModeButton href={`?cards=${cardsIds}`} target="_blank">
+            <Button onClick={() => this.shareDeck(cards)}>
               Share Your Deck
-            </SelectModeButton>
+            </Button>
           </SelectModeButtonWrapper>
         )}
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={this.closeModal}
+          style={customStyles}
+          contentLabel="Add Card Modal"
+        >
+          <CloseButton onClick={this.closeModal}>
+            <img src={CloseIcon} alt="Close Button" />
+          </CloseButton>
+          {cardsIds && (
+            <SharedLink>
+              Your Deck on
+              <Link to={`?cards=${cardsIds}`} target="_blank">
+                Link
+              </Link>
+            </SharedLink>
+          )}
+        </Modal>
       </DeckGeneratorWrapper>
     );
   }
 }
 
+const mapStateToProps = state => ({
+  cards: state.cards.cards,
+});
+
+export default connect(
+  mapStateToProps,
+  { fetchCards, fetchSharedCards }
+)(DeckGenerator);
+
 DeckGenerator.propTypes = {
-  match: PropTypes.object,
   location: PropTypes.object,
+  cards: PropTypes.array,
+  fetchCards: PropTypes.func,
+  fetchSharedCards: PropTypes.func,
 };
