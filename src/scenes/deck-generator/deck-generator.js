@@ -106,8 +106,6 @@ class DeckGenerator extends Component {
   };
   handleingAddedCard = card => {
     const { cards } = this.state;
-    console.log(card);
-    console.log(cards);
 
     if (cards.includes(card)) {
       return alert(`you can't add same card twice`);
@@ -127,12 +125,8 @@ class DeckGenerator extends Component {
     let cards;
     if (selectMode) {
       cards = this.state.cards;
-      console.log('sssssssssssss');
-      console.log(cards);
     } else {
       cards = this.props.cards;
-      console.log('asdasdsada');
-      console.log(cards);
     }
     const cardNotEmpty = cards.length > 0;
 
