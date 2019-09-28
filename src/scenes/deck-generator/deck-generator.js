@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
 import queryString from 'query-string';
@@ -10,7 +10,7 @@ import { fetchCards, fetchSharedCards } from '@actions/card-actions';
 
 import { default as Cards } from './components/cards';
 import { default as DeckStatistics } from './components/deck-statistics';
-import { Container, Title, colors } from '@utilities';
+import { Container, Title, colors, CloseButton } from '@utilities';
 import { CloseIcon } from '@images';
 
 const customStyles = {
@@ -25,16 +25,6 @@ const customStyles = {
     height: '300px',
   },
 };
-
-const CloseButton = styled.button`
-  display: block;
-  margin-left: auto;
-  width: 35px;
-  height: 35px;
-  border: none;
-  background: none;
-  cursor: pointer;
-`;
 
 const Button = styled.button`
   display: inline-block;
@@ -75,7 +65,7 @@ const SharedLink = styled.p`
 
 Modal.setAppElement('#root');
 
-class DeckGenerator extends PureComponent {
+class DeckGenerator extends Component {
   state = {
     cards: [],
     selectMode: false,
@@ -116,6 +106,9 @@ class DeckGenerator extends PureComponent {
   };
   handleingAddedCard = card => {
     const { cards } = this.state;
+    console.log(card);
+    console.log(cards);
+
     if (cards.includes(card)) {
       return alert(`you can't add same card twice`);
     } else {
@@ -134,8 +127,12 @@ class DeckGenerator extends PureComponent {
     let cards;
     if (selectMode) {
       cards = this.state.cards;
+      console.log('sssssssssssss');
+      console.log(cards);
     } else {
       cards = this.props.cards;
+      console.log('asdasdsada');
+      console.log(cards);
     }
     const cardNotEmpty = cards.length > 0;
 

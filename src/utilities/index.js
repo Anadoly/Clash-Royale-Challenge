@@ -6,3 +6,4 @@ export { default as shuffledCards } from './shuffled-cards';
 export { default as sharedCardsArray } from './shared-cards';
 export { default as handlePercent } from './handle-percent';
 export { default as Loading } from './loading';
+export { default as CloseButton } from './close-button';

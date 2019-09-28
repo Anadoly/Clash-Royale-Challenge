@@ -5,6 +5,7 @@ import styled from '@emotion/styled/macro';
 
 import CardsTabs from './tabs';
 import { CloseIcon, addIcon } from '@images';
+import { CloseButton } from '@utilities';
 
 const customStyles = {
   content: {
@@ -20,15 +21,6 @@ const customStyles = {
   },
 };
 
-const CloseButton = styled.button`
-  display: block;
-  margin-left: auto;
-  width: 35px;
-  height: 35px;
-  border: none;
-  background: none;
-  cursor: pointer;
-`;
 const AddCard = styled.button`
   width: 150px;
   height: 200px;

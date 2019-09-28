@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
+import Modal from 'react-modal';
 
-import { colors } from '@utilities';
-import { Elixir, RemoveIcon } from '@images';
+import { colors, CloseButton } from '@utilities';
+
+import { Elixir, RemoveIcon, CloseIcon } from '@images';
+import { CardDeatils } from '@scenes';
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    width: '800px',
+    height: '500px',
+    zIndex: '10',
+    background: '#488bf4',
+  },
+};
 
 const CardWarpper = styled.div`
   width: ${props => (props.selectMode ? '75px' : '150px')};
@@ -63,44 +81,78 @@ const RemoveButton = styled.button`
   top: ${props => (props.level === 9 ? '7px' : '-10px')};
 `;
 
-const Card = props => {
-  const { card, selectMode, canRemove } = props;
+Modal.setAppElement('#root');
 
-  const handleAddCard = (card, selectMode) => {
+export default class Card extends PureComponent {
+  state = {
+    modalIsOpen: false,
+  };
+  handleAddCard = (card, selectMode) => {
     if (!selectMode) {
       return;
     } else {
-      props.handleingAddedCard(card);
+      this.props.handleingAddedCard(card);
     }
   };
-  const handleRemoveCard = card => {
-    props.handleingRemoveCard(card);
+  handleRemoveCard = card => {
+    this.props.handleingRemoveCard(card);
   };
-  return (
-    <CardWarpper key={card._id} selectMode={selectMode}>
-      <CardA
-        href={selectMode ? '#!' : `card/${card.idName}`}
-        onClick={() => handleAddCard(card, selectMode)}
-      >
-        <CardImg
-          src={`${process.env.REACT_APP_BACK_END_API}/images/cards/${card.idName}.png`}
-          alt={card.idName}
-        />
-        <CardElixir level={card.level}>{card.elixirCost}</CardElixir>
-        <CardLevel level={card.level} selectMode={selectMode}>
-          {card.level === 9 ? `Lvl ${card.level}` : `Level ${card.level}`}
-        </CardLevel>
-      </CardA>
-      {canRemove && handleRemoveCard && (
-        <RemoveButton level={card.level} onClick={() => handleRemoveCard(card)}>
-          <img src={RemoveIcon} alt="Close Button" />
-        </RemoveButton>
-      )}
-    </CardWarpper>
-  );
-};
 
-export default Card;
+  openModal = () => {
+    this.setState({ modalIsOpen: true });
+  };
+
+  closeModal = () => {
+    this.setState({ modalIsOpen: false });
+  };
+
+  render() {
+    const { modalIsOpen } = this.state;
+    const { card, selectMode, canRemove } = this.props;
+
+    return (
+      <>
+        <CardWarpper key={card._id} selectMode={selectMode}>
+          <CardA
+            onClick={
+              selectMode
+                ? () => this.handleAddCard(card, selectMode)
+                : this.openModal
+            }
+          >
+            <CardImg
+              src={`${process.env.REACT_APP_BACK_END_API}/images/cards/${card.idName}.png`}
+              alt={card.idName}
+            />
+            <CardElixir level={card.level}>{card.elixirCost}</CardElixir>
+            <CardLevel level={card.level} selectMode={selectMode}>
+              {card.level === 9 ? `Lvl ${card.level}` : `Level ${card.level}`}
+            </CardLevel>
+          </CardA>
+          {canRemove && this.handleRemoveCard && (
+            <RemoveButton
+              level={card.level}
+              onClick={() => this.handleRemoveCard(card)}
+            >
+              <img src={RemoveIcon} alt="Remove Button" />
+            </RemoveButton>
+          )}
+        </CardWarpper>
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={this.closeModal}
+          style={customStyles}
+          contentLabel="Add Card Modal"
+        >
+          <CloseButton onClick={this.closeModal}>
+            <img src={CloseIcon} alt="Close Button" />
+          </CloseButton>
+          <CardDeatils idName={card.idName} />
+        </Modal>
+      </>
+    );
+  }
+}
 
 Card.propTypes = {
   card: PropTypes.object.isRequired,

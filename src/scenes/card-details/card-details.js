@@ -47,16 +47,22 @@ const CardImg = styled.img`
 
 class CardDeatils extends PureComponent {
   componentDidMount() {
-    const {
-      match: { path },
-    } = this.props;
-    if (path === '/card/:idName') {
+    if (this.props.match) {
       const {
-        match: {
-          params: { idName },
-        },
-        fetchCard,
+        match: { path },
       } = this.props;
+
+      if (path === '/card/:idName') {
+        const {
+          match: {
+            params: { idName },
+          },
+          fetchCard,
+        } = this.props;
+        fetchCard(idName);
+      }
+    } else if (this.props.idName) {
+      const { fetchCard, idName } = this.props;
       fetchCard(idName);
     }
   }
@@ -109,7 +115,7 @@ export default connect(
 )(CardDeatils);
 
 CardDeatils.propTypes = {
-  match: PropTypes.object.isRequired,
+  match: PropTypes.object,
   fetchCard: PropTypes.func,
   card: PropTypes.object.isRequired,
 };
