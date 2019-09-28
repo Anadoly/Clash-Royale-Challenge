@@ -10,7 +10,7 @@ import { fetchCards, fetchSharedCards } from '@actions/card-actions';
 
 import { default as Cards } from './components/cards';
 import { default as DeckStatistics } from './components/deck-statistics';
-import { Container, Title, colors, CloseButton } from '@utilities';
+import { Container, Title, colors, CloseButton, Loading } from '@utilities';
 import { CloseIcon } from '@images';
 
 const customStyles = {
@@ -133,6 +133,7 @@ class DeckGenerator extends Component {
     return (
       <DeckGeneratorWrapper>
         <H1>Deck Generator</H1>
+        {!cardNotEmpty && <Loading />}
         <Cards
           cards={cards}
           selectMode={selectMode}

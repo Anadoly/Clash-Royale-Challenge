@@ -118,4 +118,5 @@ CardDeatils.propTypes = {
   match: PropTypes.object,
   fetchCard: PropTypes.func,
   card: PropTypes.object.isRequired,
+  idName: PropTypes.string,
 };
