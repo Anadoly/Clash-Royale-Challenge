@@ -7,3 +7,4 @@ export { default as sharedCardsArray } from './shared-cards';
 export { default as handlePercent } from './handle-percent';
 export { default as Loading } from './loading';
 export { default as CloseButton } from './close-button';
+export { default as generateRarityArray } from './generate-card-rarity';

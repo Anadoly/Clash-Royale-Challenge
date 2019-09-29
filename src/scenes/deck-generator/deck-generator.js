@@ -6,12 +6,17 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Modal from 'react-modal';
 
-import { fetchCards, fetchSharedCards } from '@actions/card-actions';
-
-import { default as Cards } from './components/cards';
-import { default as DeckStatistics } from './components/deck-statistics';
+import {
+  fetchCards,
+  fetchSharedCards,
+  addCard,
+  removeCard,
+  clearDeck,
+} from '@actions/card-actions';
 import { Container, Title, colors, CloseButton, Loading } from '@utilities';
 import { CloseIcon } from '@images';
+import { default as Cards } from './components/cards';
+import { default as DeckStatistics } from './components/deck-statistics';
 
 const customStyles = {
   content: {
@@ -102,38 +107,30 @@ class DeckGenerator extends Component {
     this.setState({ cardsIds, modalIsOpen: true });
   };
   handleSelectMode = () => {
+    this.props.clearDeck();
     this.setState({ selectMode: true, canRemove: true });
   };
   handleingAddedCard = card => {
-    const { cards } = this.state;
+    const { cards, addCard } = this.props;
 
     if (cards.includes(card)) {
       return alert(`you can't add same card twice`);
     } else {
-      cards.push(card);
-      this.setState({ cards });
+      addCard(card);
     }
   };
   handleingRemoveCard = removedCard => {
-    const cards = this.state.cards.filter(function(card) {
-      return removedCard._id !== card._id;
-    });
-    this.setState({ cards });
+    this.props.removeCard(removedCard);
   };
   render() {
     const { selectMode, canRemove, modalIsOpen, cardsIds } = this.state;
-    let cards;
-    if (selectMode) {
-      cards = this.state.cards;
-    } else {
-      cards = this.props.cards;
-    }
+    const { cards } = this.props;
     const cardNotEmpty = cards.length > 0;
 
     return (
       <DeckGeneratorWrapper>
         <H1>Deck Generator</H1>
-        {!cardNotEmpty && <Loading />}
+        {!cardNotEmpty && !selectMode && <Loading />}
         <Cards
           cards={cards}
           selectMode={selectMode}
@@ -183,12 +180,15 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { fetchCards, fetchSharedCards }
+  { fetchCards, fetchSharedCards, addCard, removeCard, clearDeck }
 )(DeckGenerator);
 
 DeckGenerator.propTypes = {
   location: PropTypes.object,
   cards: PropTypes.array,
-  fetchCards: PropTypes.func,
-  fetchSharedCards: PropTypes.func,
+  fetchCards: PropTypes.func.isRequired,
+  fetchSharedCards: PropTypes.func.isRequired,
+  addCard: PropTypes.func.isRequired,
+  removeCard: PropTypes.func.isRequired,
+  clearDeck: PropTypes.func.isRequired,
 };

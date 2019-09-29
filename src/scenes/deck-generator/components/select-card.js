@@ -2,10 +2,12 @@ import React, { PureComponent } from 'react';
 import Modal from 'react-modal';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled/macro';
+import { connect } from 'react-redux';
 
 import CardsTabs from './tabs';
 import { CloseIcon, addIcon } from '@images';
-import { CloseButton } from '@utilities';
+import { CloseButton, generateRarityArray } from '@utilities';
+import { fetchAllCards } from '@actions/card-actions';
 
 const customStyles = {
   content: {
@@ -35,54 +37,15 @@ const AddCard = styled.button`
 `;
 Modal.setAppElement('#root');
 
-export default class SelectCard extends PureComponent {
+class SelectCard extends PureComponent {
   componentDidMount() {
-    fetch(`${process.env.REACT_APP_BACK_END_API}/api/cards`)
-      .then(response => response.json())
-      .then(data => this.generateRarityArray(data))
-      .catch(err => alert(err));
+    this.props.fetchAllCards();
   }
 
-  static propTypes = {};
   state = {
     modalIsOpen: false,
-    common: [],
-    rare: [],
-    epic: [],
-    legendary: [],
   };
 
-  generateRarityArray = cards => {
-    const common = [];
-    const rare = [];
-    const epic = [];
-    const legendary = [];
-
-    cards.forEach(card => {
-      switch (card.rarity) {
-        case 'Common':
-          card.level = 1;
-          common.push(card);
-          break;
-        case 'Rare':
-          card.level = 3;
-          rare.push(card);
-          break;
-        case 'Epic':
-          card.level = 6;
-          epic.push(card);
-          break;
-        case 'Legendary':
-          card.level = 9;
-          legendary.push(card);
-          break;
-        default:
-          break;
-      }
-    });
-
-    this.setState({ common, rare, epic, legendary });
-  };
   openModal = () => {
     this.setState({ modalIsOpen: true });
   };
@@ -91,8 +54,9 @@ export default class SelectCard extends PureComponent {
     this.setState({ modalIsOpen: false });
   };
   render() {
-    const { common, rare, epic, legendary, modalIsOpen } = this.state;
-    const { handleingAddedCard, selectMode } = this.props;
+    const { modalIsOpen } = this.state;
+    const { handleingAddedCard, selectMode, cards } = this.props;
+    const { common, rare, epic, legendary } = generateRarityArray(cards);
     return (
       <div>
         <AddCard onClick={this.openModal}>
@@ -117,7 +81,18 @@ export default class SelectCard extends PureComponent {
     );
   }
 }
+const mapStateToProps = state => ({
+  cards: state.cards.allCards,
+});
+
+export default connect(
+  mapStateToProps,
+  { fetchAllCards }
+)(SelectCard);
+
 SelectCard.propTypes = {
   handleingAddedCard: PropTypes.func.isRequired,
   selectMode: PropTypes.bool,
+  cards: PropTypes.array.isRequired,
+  fetchAllCards: PropTypes.func.isRequired,
 };

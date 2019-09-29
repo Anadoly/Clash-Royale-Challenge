@@ -20,35 +20,17 @@ const Cards = props => {
     handleingRemoveCard,
     canRemove,
   } = props;
+
   return (
     <CardsWrapper>
-      {cards.map(card => {
-        switch (card.rarity) {
-          case 'Common':
-            card.level = 1;
-            break;
-          case 'Rare':
-            card.level = 3;
-            break;
-          case 'Epic':
-            card.level = 6;
-            break;
-          case 'Legendary':
-            card.level = 9;
-            break;
-          default:
-            card.level = 0;
-            break;
-        }
-        return (
-          <Card
-            key={JSON.stringify(card)}
-            card={card}
-            handleingRemoveCard={handleingRemoveCard}
-            canRemove={canRemove}
-          />
-        );
-      })}
+      {cards.map(card => (
+        <Card
+          key={JSON.stringify(card)}
+          card={card}
+          handleingRemoveCard={handleingRemoveCard}
+          canRemove={canRemove}
+        />
+      ))}
       {selectMode && cards.length < 8 && (
         <SelectCard
           handleingAddedCard={handleingAddedCard}
