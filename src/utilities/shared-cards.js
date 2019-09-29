@@ -1,3 +1,5 @@
+import generateCardLevel from './generate-card-level';
+
 const sharedCardsArray = (cardsArr, cardsIds) => {
   const cards = [];
   cardsIds.forEach(cardId => {
@@ -6,7 +8,7 @@ const sharedCardsArray = (cardsArr, cardsIds) => {
     });
     cards.push(card[0]);
   });
-  return cards;
+  return generateCardLevel(cards);
 };
 
 export default sharedCardsArray;
