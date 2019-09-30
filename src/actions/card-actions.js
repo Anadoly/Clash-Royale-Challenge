@@ -55,23 +55,23 @@ export const fetchCard = idName => dispatch => {
     );
 };
 
-export const addCard = card => dispatch => {
-  dispatch({
+export const addCard = card => {
+  return {
     type: ADD_CARD,
     payload: card,
-  });
+  };
 };
 
-export const removeCard = card => dispatch => {
-  dispatch({
+export const removeCard = card => {
+  return {
     type: REMOVE_CARD,
     payload: card,
-  });
+  };
 };
 
-export const clearDeck = () => dispatch => {
-  dispatch({
+export const clearDeck = () => {
+  return {
     type: CLEAR_DECK,
     payload: [],
-  });
+  };
 };
